@@ -55,7 +55,7 @@ jobs:
         run: |
           flutter gen-l10n
           dart run build_runner build --delete-conflicting-outputs
-          flutter build apk --release
+          flutter build apk --release --no-sign
           flutter build apk --split-per-abi
 
       - name: Rename builds
