@@ -12,26 +12,31 @@ Widget bookCover(
 }) {
   radius ??= 8;
   File file = File(book.coverFullPath);
-  Widget child = file.existsSync()
-      ? Container(
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: FileImage(file),
-              fit: BoxFit.cover,
-            ),
-          ),
-        )
-      : Container(
-          color: Colors.primaries[book.title.hashCode % Colors.primaries.length]
-              .shade200,
-          child: Center(
-            child: Icon(
-              Icons.book,
-              size: 40,
-              color: Theme.of(context).hintColor,
-            ),
-          ),
-        );
+
+  Widget defaultCover = Container(
+    color: Colors.primaries[book.title.hashCode % Colors.primaries.length].shade200,
+    child: Center(
+      child: Icon(
+        Icons.book,
+        size: 40,
+        color: Theme.of(context).hintColor,
+      ),
+    ),
+  );
+
+  Widget child;
+  if (file.existsSync()) {
+    child = Image.file(
+      file,
+      fit: BoxFit.cover,
+      errorBuilder: (context, error, stackTrace) {
+        // 文件存在但不是有效图片时，显示默认封面
+        return defaultCover;
+      },
+    );
+  } else {
+    child = defaultCover;
+  }
 
   return Container(
       height: height,
